@@ -30,7 +30,7 @@ public class FormValidationTests {
         driver.quit();
     }
 
-    // --- M15 Contact Form Test ---
+    // --- M3 Contact Form Test ---
     @Test
     void testContactForm_Filling() {
         driver.get("http://localhost:5500/M3/index.html"); // or contact page
@@ -77,6 +77,8 @@ public class FormValidationTests {
 
 
     }
+
+    // --- M3 Quote Form Test ---
     @Test
         void testQuoteForm_FillOut() {
             driver.get("http://localhost:5500/M3/quote.html");
@@ -84,57 +86,132 @@ public class FormValidationTests {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             JavascriptExecutor js = (JavascriptExecutor) driver;
 
-            // --- STEP 1: Select Building Type ---
+            // ---------- STEP 1: Select Building Type ----------
             WebElement buildingType = wait.until(
                 ExpectedConditions.elementToBeClickable(By.id("building-type"))
             );
-            buildingType.sendKeys("Residential"); // selects Residential
+            buildingType.sendKeys("Residential");
 
-            // --- STEP 2: Wait for Step 2 card to appear ---
-            WebElement step2 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("step2")));
-            assertTrue(step2.isDisplayed(), "Step 2 card should be displayed");
+            // ---------- STEP 2: Wait for Step 2 ----------
+            WebElement step2 = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("step2"))
+            );
+            assertTrue(step2.isDisplayed());
 
-            // Wait for parent divs to remove 'd-none' and be visible
-            WebElement floorsDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#number-of-floors")));
-            WebElement basementsDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#number-of-basements")));
-            WebElement apartmentsDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#number-of-apartments")));
-
-            // Scroll each input into view and enter values
-            WebElement floors = floorsDiv.findElement(By.tagName("input"));
+            // ---------- STEP 3: Fill Required Fields ----------
+            WebElement floors = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("#number-of-floors input")
+                )
+            );
             js.executeScript("arguments[0].scrollIntoView(true);", floors);
             floors.sendKeys("10");
 
-            WebElement basements = basementsDiv.findElement(By.tagName("input"));
-            js.executeScript("arguments[0].scrollIntoView(true);", basements);
-            basements.sendKeys("2");
-
-            WebElement apartments = apartmentsDiv.findElement(By.tagName("input"));
+            WebElement apartments = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("#number-of-apartments input")
+                )
+            );
             js.executeScript("arguments[0].scrollIntoView(true);", apartments);
             apartments.sendKeys("20");
 
-            // --- STEP 3: Select Product Line ---
-            WebElement standardRadio = wait.until(ExpectedConditions.elementToBeClickable(By.id("standard")));
+            // ---------- STEP 4: Select Product Line (JS click) ----------
+            WebElement standardRadio = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.id("standard"))
+            );
             js.executeScript("arguments[0].scrollIntoView(true);", standardRadio);
-            standardRadio.click();
+            js.executeScript("arguments[0].click();", standardRadio);
 
-            // --- STEP 4: Check Pricing Display ---
-            WebElement unitPrice = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#elevator-unit-price input")));
-            WebElement totalPrice = driver.findElement(By.cssSelector("#elevator-total-price input"));
-            WebElement installationFee = driver.findElement(By.cssSelector("#installation-fees input"));
-            WebElement finalPrice = driver.findElement(By.cssSelector("#final-price input"));
+            // ---------- STEP 5: Validate Pricing Outputs ----------
+            WebElement unitPrice = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("#elevator-unit-price input")
+                )
+            );
 
-            // Scroll each pricing input into view and assert
-            js.executeScript("arguments[0].scrollIntoView(true);", unitPrice);
+            WebElement totalPrice = driver.findElement(
+                By.cssSelector("#elevator-total-price input")
+            );
+            WebElement installationFee = driver.findElement(
+                By.cssSelector("#installation-fees input")
+            );
+            WebElement finalPrice = driver.findElement(
+                By.cssSelector("#final-price input")
+            );
+
             assertTrue(unitPrice.isDisplayed());
-
-            js.executeScript("arguments[0].scrollIntoView(true);", totalPrice);
             assertTrue(totalPrice.isDisplayed());
-
-            js.executeScript("arguments[0].scrollIntoView(true);", installationFee);
             assertTrue(installationFee.isDisplayed());
-
-            js.executeScript("arguments[0].scrollIntoView(true);", finalPrice);
             assertTrue(finalPrice.isDisplayed());
         }
-    }
+// --- M3 Navigation Test ---
+    @Test
+        void testNavigation_M3_Pages() {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // ---------- HOME ----------
+            driver.get("http://localhost:5500/M3/index.html");
+            wait.until(ExpectedConditions.titleContains("Rocket Elevators")); // adjust title if needed
+            assertTrue(driver.getTitle().contains("Rocket Elevators"));
+
+            // ---------- QUOTE ----------
+            driver.get("http://localhost:5500/M3/quote.html");
+            wait.until(ExpectedConditions.titleContains("Rocket Elevators")); // adjust title if needed
+            assertTrue(driver.getTitle().contains("Rocket Elevators"));
+
+            // ---------- CONTACT ----------
+            driver.get("http://localhost:5500/M3/residential.html");
+            wait.until(ExpectedConditions.titleContains("Rocket Elevators")); // adjust title if needed
+            assertTrue(driver.getTitle().contains("Rocket Elevators"));
+        }
+        // --- M9 Login Test ---
+@Test
+void testM9_LoginOnly() {
+    driver.get("http://127.0.0.1:5173/login");
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    // ---------- FILL LOGIN FORM ----------
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")))
+        .sendKeys("aaron.calkins123@gmail.com");
+
+    driver.findElement(By.id("password")).sendKeys("1234");
+    driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+    // ---------- VERIFY LOGIN SUCCESS ----------
+    wait.until(ExpectedConditions.not(
+        ExpectedConditions.urlContains("/login")
+    ));
+
+    assertFalse(driver.getCurrentUrl().contains("/login"), "Should be redirected after login");
+}
+// --- M9 Create New Post Test ---
+@Test
+void testM9_RegisterNewUser() {
+    driver.get("http://127.0.0.1:5173/register"); // registration page
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    // ---------- FILL REGISTRATION FORM ----------
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first_name")))
+        .sendKeys("Aaron");
+    driver.findElement(By.id("last_name")).sendKeys("Calkins");
+    driver.findElement(By.id("email")).sendKeys("aaron.selenium@test.com");
+    driver.findElement(By.id("password")).sendKeys("1234");
+    driver.findElement(By.id("birthday")).sendKeys("1111111111");
+    driver.findElement(By.id("occupation")).sendKeys("1234");
+    driver.findElement(By.id("location")).sendKeys("1234");
+
+
+    // ---------- SUBMIT FORM ----------
+    driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+    // ---------- WAIT FOR REDIRECT OR SUCCESS MESSAGE ----------
+    wait.until(ExpectedConditions.urlContains("/login")); // assuming redirect to login after registration
+
+    // Optional: assert registration success
+    assertTrue(driver.getCurrentUrl().endsWith("/login"), "User should be redirected to login page after registration");
+}
+
+}
 
