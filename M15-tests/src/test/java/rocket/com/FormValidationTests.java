@@ -165,54 +165,54 @@ public class FormValidationTests {
             assertTrue(driver.getTitle().contains("Rocket Elevators"));
         }
         // --- M9 Login Test ---
-@Test
-void testM9_LoginOnly() {
-    driver.get("http://127.0.0.1:5173/login");
+    @Test
+        void testM9_LoginOnly() {
+            driver.get("http://127.0.0.1:5173/login");
 
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-    // ---------- FILL LOGIN FORM ----------
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")))
-        .sendKeys("aaron.calkins123@gmail.com");
+            // ---------- FILL LOGIN FORM ----------
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")))
+                .sendKeys("aaron.calkins123@gmail.com");
 
-    driver.findElement(By.id("password")).sendKeys("1234");
-    driver.findElement(By.cssSelector("button[type='submit']")).click();
+            driver.findElement(By.id("password")).sendKeys("1234");
+            driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-    // ---------- VERIFY LOGIN SUCCESS ----------
-    wait.until(ExpectedConditions.not(
-        ExpectedConditions.urlContains("/login")
-    ));
+            // ---------- VERIFY LOGIN SUCCESS ----------
+            wait.until(ExpectedConditions.not(
+                ExpectedConditions.urlContains("/login")
+            ));
 
-    assertFalse(driver.getCurrentUrl().contains("/login"), "Should be redirected after login");
-}
+            assertFalse(driver.getCurrentUrl().contains("/login"), "Should be redirected after login");
+    }
 // --- M9 Create New Post Test ---
-@Test
-void testM9_RegisterNewUser() {
-    driver.get("http://127.0.0.1:5173/register");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    @Test
+        void testM9_RegisterNewUser() {
+            driver.get("http://127.0.0.1:5173/register");
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-    // ---------- FILL FORM ----------
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first_name")))
-            .sendKeys("Aaron");
-    driver.findElement(By.id("last_name")).sendKeys("Calkins");
-    driver.findElement(By.id("email")).sendKeys("aaron.selenium@test.com");
-    driver.findElement(By.id("password")).sendKeys("1234");
-    driver.findElement(By.id("birthday")).sendKeys("1111111111");
-    driver.findElement(By.id("occupation")).sendKeys("1234");
-    driver.findElement(By.id("location")).sendKeys("1234");
-;
+            // ---------- FILL FORM ----------
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first_name")))
+                    .sendKeys("Aaron");
+            driver.findElement(By.id("last_name")).sendKeys("Calkins");
+            driver.findElement(By.id("email")).sendKeys("aaron.selenium@test.com");
+            driver.findElement(By.id("password")).sendKeys("1234");
+            driver.findElement(By.id("birthday")).sendKeys("1111111111");
+            driver.findElement(By.id("occupation")).sendKeys("1234");
+            driver.findElement(By.id("location")).sendKeys("1234");
+        ;
 
-    // ---------- SUBMIT FORM ----------
-    WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+            // ---------- SUBMIT FORM ----------
+            WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
 
-    // Scroll into view (ensures no sticky header blocks it)
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitBtn);
+            // Scroll into view (ensures no sticky header blocks it)
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitBtn);
 
-    // Optional: wait until clickable
-    wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
+            // Optional: wait until clickable
+            wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
 
-    // Click via JavaScript (bypasses overlays)
-    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
-}
+            // Click via JavaScript (bypasses overlays)
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
+        }
 }
 
